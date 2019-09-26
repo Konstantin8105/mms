@@ -27,20 +27,18 @@ func (c *Direct) Put(arr []float64) {
 // test
 
 func getChan() chan int {
-	ch := make(chan int, 100) // with buffer
+	ch := make(chan int, 10) // with buffer
 
 	// generate sizes
 	var wg sync.WaitGroup
-	wg.Add(gos)
-	for j := 0; j < gos; j++ {
-		go func() {
-			for _, s := range sizesExpect {
-				for k := 0; k < s.amount; k++ {
-					ch <- s.size
-				}
+	wg.Add(len(sizesExpect))
+	for j := 0; j < len(sizesExpect); j++ {
+		go func(j int) {
+			for k := 0; k < sizesExpect[j].amount; k++ {
+				ch <- sizesExpect[j].size
 			}
 			wg.Done()
-		}()
+		}(j)
 	}
 	go func() {
 		wg.Wait()
@@ -58,10 +56,10 @@ var sizesExpect = [...]struct {
 	{99, 14},
 	{15, 32},
 	{4, 22},
-	{43, 5},
+	{43, 2},
 }
 
-const gos = 3
+const gos = 10
 
 func Test(t *testing.T) {
 	memory := []mm{
@@ -106,7 +104,7 @@ func Test(t *testing.T) {
 	}
 	for i := range sizesExpect {
 		for j := 0; j < 2; j++ {
-			if profile[0][sizesExpect[i].size] != int64(sizesExpect[i].amount*gos) {
+			if profile[0][sizesExpect[i].size] != int64(sizesExpect[i].amount) {
 				t.Errorf("not expectd size for pos = %d. %d != %d ",
 					sizesExpect[i].size,
 					profile[0][sizesExpect[i].size],
