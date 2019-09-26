@@ -5,6 +5,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 // mm - interface memory management
@@ -89,6 +90,7 @@ func Test(t *testing.T) {
 						arr[o] = rand.Float64()
 					}
 					atomic.AddInt64(&profile[i][amount], 1)
+					time.Sleep(time.Millisecond)
 					memory[i].Put(arr)
 				}
 				wg.Done()
@@ -158,13 +160,13 @@ func TestEmpty(t *testing.T) {
 	}
 	arr[0] = 42
 	c.Put(arr)
-	for _, size := range []int{2, 5, 5, 1} {
+	for _, size := range []int{2, 5, 5, 3, 100, 2, 5, 3, 100} {
 		arr2 := c.Get(size)
 		if len(arr2) != size {
 			t.Errorf("not valid len: %d:%d with size = %d",
 				len(arr2), cap(arr2), size)
 		}
-		if arr[0] == arr2[0] {
+		if arr2[0] != 0 {
 			t.Errorf("not same arrays")
 		}
 		c.Put(arr2)
