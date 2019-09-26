@@ -8,8 +8,8 @@ import (
 
 // Cache of slices
 type Cache struct {
-	sync.RWMutex
-	ps []pool
+	mutex sync.RWMutex
+	ps    []pool
 }
 
 type pool struct {
@@ -20,9 +20,9 @@ type pool struct {
 // Get return slice
 func (c *Cache) Get(size int) []float64 {
 	// lock
-	c.Lock()
+	c.mutex.Lock()
 	defer func() {
-		c.Unlock()
+		c.mutex.Unlock()
 	}()
 
 	// finding index
@@ -64,12 +64,12 @@ func (c *Cache) Get(size int) []float64 {
 
 // Put slice into pool
 func (c *Cache) Put(arr []float64) {
-	c.RLock() // lock
+	c.mutex.RLock() // lock
 	var (
 		size  = cap(arr)
 		index = c.index(size) // finding index
 	)
-	c.RUnlock() // unlock
+	c.mutex.RUnlock() // unlock
 
 	if index < 0 {
 		// pool is not exist
@@ -77,9 +77,9 @@ func (c *Cache) Put(arr []float64) {
 	}
 
 	// lock and add
-	c.Lock()
+	c.mutex.Lock()
 	c.ps[index].p.Put(arr)
-	c.Unlock()
+	c.mutex.Unlock()
 }
 
 // return index with excepted size
