@@ -4,7 +4,6 @@ go:
   - tip
 before_install:
   - go test -race
-  - go test all
   - go get github.com/mattn/goveralls
 script:
   - $GOPATH/bin/goveralls -service=travis-ci
