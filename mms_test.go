@@ -149,3 +149,31 @@ func Benchmark(b *testing.B) {
 		})
 	}
 }
+
+func TestEmpty(t *testing.T) {
+	arr := make([]float64, 2)
+	arr[0] = 42
+	var c Cache
+	c.Put(arr)
+	{
+		arr2 := c.Get(2)
+		if arr[0] == arr2[0] {
+			t.Errorf("not same arrays")
+		}
+		c.Put(arr2)
+	}
+	{
+		arr2 := c.Get(5)
+		if arr[0] == arr2[0] {
+			t.Errorf("not same arrays")
+		}
+		c.Put(arr2)
+	}
+	{
+		arr2 := c.Get(1)
+		if arr[0] == arr2[0] {
+			t.Errorf("not same arrays")
+		}
+		c.Put(arr2)
+	}
+}

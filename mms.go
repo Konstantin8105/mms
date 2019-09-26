@@ -1,7 +1,6 @@
 package mms
 
 import (
-	"fmt"
 	"sort"
 	"sync"
 )
@@ -51,9 +50,10 @@ func (c *Cache) Get(size int) []float64 {
 	// pool is found
 	arr := c.ps[index].p.Get().([]float64)
 
-	if len(arr) < size {
-		panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
-	}
+	// Only for debugging:
+	//	if len(arr) < size {
+	//		panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
+	//	}
 
 	for i := range arr {
 		// initialization of slice
