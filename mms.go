@@ -95,11 +95,8 @@ func (c *Cache) Put(arr []float64) {
 		return
 	}
 
-	// lock for add
+	// lock and add
 	c.Lock()
-	defer func() {
-		c.Unlock()
-	}()
-
 	c.ps[index].p.Put(arr)
+	c.Unlock()
 }
