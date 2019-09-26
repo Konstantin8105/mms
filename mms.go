@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// Cache of slices
 type Cache struct {
 	sync.RWMutex
 	ps []pool
@@ -16,6 +17,7 @@ type pool struct {
 	size int
 }
 
+// Get return slice
 func (c *Cache) Get(size int) []float64 {
 	// lock
 	c.Lock()
@@ -70,6 +72,7 @@ func (c *Cache) Get(size int) []float64 {
 	return arr
 }
 
+// Put slice into pool
 func (c *Cache) Put(arr []float64) {
 	c.RLock() // lock
 
