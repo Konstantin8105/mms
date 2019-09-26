@@ -7,7 +7,7 @@ import (
 )
 
 type Cache struct {
-	sync.Mutex
+	sync.RWMutex
 	ps []pool
 }
 
@@ -71,13 +71,9 @@ func (c *Cache) Get(size int) []float64 {
 }
 
 func (c *Cache) Put(arr []float64) {
-	// lock
-	c.Lock()
-	defer func() {
-		c.Unlock()
-	}()
+	c.RLock() // lock
 
-	size := len(arr)
+	size := cap(arr)
 
 	// finding index
 	index := -1
@@ -92,10 +88,18 @@ func (c *Cache) Put(arr []float64) {
 		}
 	}
 
+	c.RUnlock() // unlock
+
 	if index < 0 {
 		// pool is not exist
 		return
 	}
+
+	// lock for add
+	c.Lock()
+	defer func() {
+		c.Unlock()
+	}()
 
 	c.ps[index].p.Put(arr)
 }

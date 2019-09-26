@@ -7,12 +7,12 @@ go test -v -bench=. -benchmem -count=10 > bench.prof
 benchstat bench.prof 
 
 name       time/op
-/Direct-5   190µs ±21%
-/Cache-5    203µs ±24%
+/Direct-5   202µs ±22%
+/Cache-5    136µs ± 8%
 
 name       alloc/op
 /Direct-5  23.1kB ± 0%
-/Cache-5   4.07kB ± 0%
+/Cache-5   4.06kB ± 0%
 
 name       allocs/op
 /Direct-5     123 ± 0%
@@ -27,8 +27,8 @@ go test -v -bench=. -benchmem
 goos: linux
 goarch: amd64
 pkg: github.com/Konstantin8105/mms
-Benchmark/Direct-5         	    5826	    178096 ns/op	   23071 B/op	     123 allocs/op
-Benchmark/Cache-5          	    9283	    239751 ns/op	    4068 B/op	     123 allocs/op
+Benchmark/Direct-5         	    5986	    202165 ns/op	   23072 B/op	     123 allocs/op
+Benchmark/Cache-5          	   10000	    129941 ns/op	    4064 B/op	     123 allocs/op
 PASS
 ok  	github.com/Konstantin8105/mms	3.307s
 ```
@@ -60,16 +60,16 @@ Showing nodes accounting for 1.89s, 40.04% of 4.72s total
 Dropped 71 nodes (cum <= 0.02s)
 Showing top 10 nodes out of 84
       flat  flat%   sum%        cum   cum%
-     0.14s  2.97%  2.97%      3.61s 76.48%  github.com/Konstantin8105/mms.Benchmark.func1.1
-     0.03s  0.64%  3.60%      2.64s 55.93%  math/rand.Float64
-     0.07s  1.48%  5.08%      2.61s 55.30%  math/rand.(*Rand).Float64
-     0.03s  0.64%  5.72%      2.54s 53.81%  math/rand.(*Rand).Int63
-     0.23s  4.87% 10.59%      2.51s 53.18%  math/rand.(*lockedSource).Int63
-     0.52s 11.02% 21.61%      1.25s 26.48%  sync.(*Mutex).Lock
-     0.44s  9.32% 30.93%      0.79s 16.74%  sync.(*Mutex).Unlock
-     0.42s  8.90% 39.83%      0.73s 15.47%  sync.(*Mutex).lockSlow
-     0.01s  0.21% 40.04%      0.65s 13.77%  runtime.mcall
-         0     0% 40.04%      0.57s 12.08%  runtime.park_m
+     0.10s  2.94%  2.94%      2.78s 81.76%  github.com/Konstantin8105/mms.Benchmark.func1.1
+     0.05s  1.47%  4.41%      2.10s 61.76%  math/rand.Float64
+     0.05s  1.47%  5.88%      2.05s 60.29%  math/rand.(*Rand).Float64
+     0.01s  0.29%  6.18%         2s 58.82%  math/rand.(*Rand).Int63
+     0.17s  5.00% 11.18%      1.99s 58.53%  math/rand.(*lockedSource).Int63
+     0.37s 10.88% 22.06%      0.98s 28.82%  sync.(*Mutex).Lock
+     0.44s 12.94% 35.00%      0.68s 20.00%  sync.(*Mutex).Unlock
+     0.40s 11.76% 46.76%      0.61s 17.94%  sync.(*Mutex).lockSlow
+         0     0% 46.76%      0.35s 10.29%  runtime.mcall
+     0.03s  0.88% 47.65%      0.27s  7.94%  runtime.schedule
 (pprof) exit
 ```
 
