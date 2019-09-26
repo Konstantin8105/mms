@@ -78,7 +78,9 @@ func (c *Cache) Put(arr []float64) {
 
 	// lock and add
 	c.mutex.Lock()
-	c.ps[index].p.Put(arr)
+	if index < len(c.ps) && c.ps[index].size == size {
+		c.ps[index].p.Put(arr)
+	}
 	c.mutex.Unlock()
 }
 
