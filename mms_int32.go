@@ -59,7 +59,7 @@ func (c *Int32sCache) Get(size int) []int32 {
 
 	for i := range arr {
 		// initialization of slice
-		arr[i] = 0.0
+		arr[i] = 0
 	}
 	return arr
 }

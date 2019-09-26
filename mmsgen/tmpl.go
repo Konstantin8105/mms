@@ -65,7 +65,7 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 
 	for i := range arr {
 		// initialization of slice
-		arr[i] = 0.0
+		arr[i] = 0
 	}
 	return arr
 }

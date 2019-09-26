@@ -59,7 +59,7 @@ func (c *Float64sCache) Get(size int) []float64 {
 
 	for i := range arr {
 		// initialization of slice
-		arr[i] = 0.0
+		arr[i] = 0
 	}
 	return arr
 }
