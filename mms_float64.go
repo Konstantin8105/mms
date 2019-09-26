@@ -7,19 +7,19 @@ import (
 	"sync"
 )
 
-// FloatsCache of slices
-type FloatsCache struct {
+// Float64sCache of slices
+type Float64sCache struct {
 	mutex sync.RWMutex
-	ps    []pool
+	ps    []poolFloat64sCache
 }
 
-type pool struct {
+type poolFloat64sCache struct {
 	p    *sync.Pool
 	size int
 }
 
 // Get return slice
-func (c *FloatsCache) Get(size int) []float64 {
+func (c *Float64sCache) Get(size int) []float64 {
 	// lock
 	c.mutex.Lock()
 	defer func() {
@@ -31,7 +31,7 @@ func (c *FloatsCache) Get(size int) []float64 {
 
 	// creating a new pool
 	if index < 0 {
-		c.ps = append(c.ps, pool{
+		c.ps = append(c.ps, poolFloat64sCache{
 			p: &sync.Pool{
 				New: func() interface{} {
 					return make([]float64, size)
@@ -65,7 +65,7 @@ func (c *FloatsCache) Get(size int) []float64 {
 }
 
 // Put slice into pool
-func (c *FloatsCache) Put(arr []float64) {
+func (c *Float64sCache) Put(arr []float64) {
 	c.mutex.RLock() // lock
 	var (
 		size  = cap(arr)
@@ -87,7 +87,7 @@ func (c *FloatsCache) Put(arr []float64) {
 }
 
 // return index with excepted size
-func (c *FloatsCache) index(size int) int {
+func (c *Float64sCache) index(size int) int {
 	index := -1
 	for i := range c.ps {
 		if c.ps[i].size < size {
