@@ -151,9 +151,9 @@ func Benchmark(b *testing.B) {
 }
 
 func TestEmpty(t *testing.T) {
-	arr := make([]float64, 2)
-	arr[0] = 42
 	var c Cache
+	arr := c.Get(3)
+	arr[0] = 42
 	c.Put(arr)
 	{
 		arr2 := c.Get(2)
