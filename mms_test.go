@@ -64,7 +64,7 @@ const gos = 10
 func Test(t *testing.T) {
 	memory := []mm{
 		&Direct{},
-		&Cache{},
+		&FloatsCache{},
 	}
 
 	var profile [2][100]int64
@@ -121,7 +121,7 @@ func Benchmark(b *testing.B) {
 		m    mm
 	}{
 		{"Direct", &Direct{}},
-		{"Cache", &Cache{}},
+		{"FloatsCache", &FloatsCache{}},
 	}
 
 	for im := range memory {
@@ -151,7 +151,7 @@ func Benchmark(b *testing.B) {
 }
 
 func TestEmpty(t *testing.T) {
-	var c Cache
+	var c FloatsCache
 	arr := c.Get(3)
 	arr[0] = 42
 	c.Put(arr)
