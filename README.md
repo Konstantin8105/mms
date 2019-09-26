@@ -27,8 +27,8 @@ go test -v -bench=. -benchmem
 goos: linux
 goarch: amd64
 pkg: github.com/Konstantin8105/mms
-Benchmark/Direct-5         	    5986	    202165 ns/op	   23072 B/op	     123 allocs/op
-Benchmark/Cache-5          	   10000	    129941 ns/op	    4064 B/op	     123 allocs/op
+Benchmark/Direct-5         	    8082	    200886 ns/op	   23077 B/op	     123 allocs/op
+Benchmark/Cache-5          	   10000	    142438 ns/op	    4065 B/op	     123 allocs/op
 PASS
 ok  	github.com/Konstantin8105/mms	3.307s
 ```

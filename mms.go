@@ -55,7 +55,7 @@ func (c *Cache) Get(size int) []float64 {
 
 		// return
 		index = len(c.ps) - 1
-		return make([]float64, size)
+		return c.ps[index].p.New().([]float64)
 	}
 
 	// pool is found
