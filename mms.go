@@ -88,14 +88,13 @@ func (c *Cache) Put(arr []float64) {
 func (c *Cache) index(size int) int {
 	index := -1
 	for i := range c.ps {
+		if c.ps[i].size < size {
+			continue
+		}
 		if c.ps[i].size == size {
 			index = i
-			break
 		}
-		if c.ps[i].size > size {
-			// typically for creating a new pool
-			break
-		}
+		break
 	}
 	return index
 }
