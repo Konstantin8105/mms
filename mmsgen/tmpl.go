@@ -51,7 +51,7 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 		})
 
 		// return
-		index = len(c.ps) - 1
+		index = c.index(size)
 		return c.ps[index].p.New().({{ .Type }})
 	}
 

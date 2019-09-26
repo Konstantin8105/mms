@@ -158,30 +158,11 @@ func TestEmpty(t *testing.T) {
 	}
 	arr[0] = 42
 	c.Put(arr)
-	{
-		arr2 := c.Get(2)
-		if len(arr2) != 2 {
-			t.Errorf("not valid len: %d", len(arr2))
-		}
-		if arr[0] == arr2[0] {
-			t.Errorf("not same arrays")
-		}
-		c.Put(arr2)
-	}
-	{
-		arr2 := c.Get(5)
-		if len(arr2) != 5 {
-			t.Errorf("not valid len: %d", len(arr2))
-		}
-		if arr[0] == arr2[0] {
-			t.Errorf("not same arrays")
-		}
-		c.Put(arr2)
-	}
-	{
-		arr2 := c.Get(1)
-		if len(arr2) != 1 {
-			t.Errorf("not valid len: %d", len(arr2))
+	for _, size := range []int{2, 5, 5, 1} {
+		arr2 := c.Get(size)
+		if len(arr2) != size {
+			t.Errorf("not valid len: %d:%d with size = %d",
+				len(arr2), cap(arr2), size)
 		}
 		if arr[0] == arr2[0] {
 			t.Errorf("not same arrays")

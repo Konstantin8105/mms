@@ -45,7 +45,7 @@ func (c *Float64sCache) Get(size int) []float64 {
 		})
 
 		// return
-		index = len(c.ps) - 1
+		index = c.index(size)
 		return c.ps[index].p.New().([]float64)
 	}
 

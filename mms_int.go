@@ -45,7 +45,7 @@ func (c *IntsCache) Get(size int) []int {
 		})
 
 		// return
-		index = len(c.ps) - 1
+		index = c.index(size)
 		return c.ps[index].p.New().([]int)
 	}
 
