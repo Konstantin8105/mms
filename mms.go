@@ -26,17 +26,7 @@ func (c *Cache) Get(size int) []float64 {
 	}()
 
 	// finding index
-	index := -1
-	for i := range c.ps {
-		if c.ps[i].size == size {
-			index = i
-			break
-		}
-		if c.ps[i].size > size {
-			// typically for creating a new pool
-			break
-		}
-	}
+	index := c.index(size)
 
 	// creating a new pool
 	if index < 0 {
@@ -75,22 +65,10 @@ func (c *Cache) Get(size int) []float64 {
 // Put slice into pool
 func (c *Cache) Put(arr []float64) {
 	c.RLock() // lock
-
-	size := cap(arr)
-
-	// finding index
-	index := -1
-	for i := range c.ps {
-		if c.ps[i].size == size {
-			index = i
-			break
-		}
-		if c.ps[i].size > size {
-			// typically for creating a new pool
-			break
-		}
-	}
-
+	var (
+		size  = cap(arr)
+		index = c.index(size) // finding index
+	)
 	c.RUnlock() // unlock
 
 	if index < 0 {
@@ -102,4 +80,20 @@ func (c *Cache) Put(arr []float64) {
 	c.Lock()
 	c.ps[index].p.Put(arr)
 	c.Unlock()
+}
+
+// return index with excepted size
+func (c *Cache) index(size int) int {
+	index := -1
+	for i := range c.ps {
+		if c.ps[i].size == size {
+			index = i
+			break
+		}
+		if c.ps[i].size > size {
+			// typically for creating a new pool
+			break
+		}
+	}
+	return index
 }

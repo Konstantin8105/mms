@@ -7,8 +7,8 @@ go test -v -bench=. -benchmem -count=10 > bench.prof
 benchstat bench.prof 
 
 name       time/op
-/Direct-5   181µs ±23%
-/Cache-5    132µs ± 8%
+/Direct-5   192µs ±18%
+/Cache-5    144µs ± 9%
 
 name       alloc/op
 /Direct-5  23.1kB ± 0%
