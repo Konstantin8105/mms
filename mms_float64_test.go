@@ -172,3 +172,24 @@ func TestEmpty(t *testing.T) {
 		c.Put(arr2)
 	}
 }
+
+func TestDebug(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatalf("Cannot found double putting")
+		}
+	}()
+	oldDebug := Debug
+	defer func() {
+		Debug = oldDebug
+	}()
+
+	Debug = true
+
+	size := 5
+
+	var c Float64sCache
+	arr := c.Get(size)
+	c.Put(arr)
+	c.Put(arr)
+}

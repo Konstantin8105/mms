@@ -8,6 +8,8 @@ package {{ .Package }}
 import (
 	"sort"
 	"sync"
+	"fmt"
+	"unsafe"
 	{{ range .Imports }}
 	"{{ . }}"
 	{{ end }}
@@ -15,8 +17,9 @@ import (
 
 // {{ .CacheName }} of slices
 type {{ .CacheName }} struct {
-	mutex sync.RWMutex
-	ps    []pool{{ .CacheName }}
+	mutex  sync.RWMutex
+	ps     []pool{{ .CacheName }}
+	putarr []uintptr
 }
 
 type pool{{ .CacheName }} struct {
@@ -58,10 +61,11 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 	// pool is found
 	arr := c.ps[index].p.Get().({{ .Type }})
 
-	// Only for debugging:
-	//	if len(arr) < size {
-	//		panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
-	//	}
+	if Debug {
+		if len(arr) < size {
+			panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
+		}
+	}
 
 	for i := range arr {
 		// initialization of slice
@@ -87,6 +91,16 @@ func (c *{{ .CacheName }}) Put(arr {{ .Type }}) {
 	// lock and add
 	c.mutex.Lock()
 	if index < len(c.ps) && c.ps[index].size == size {
+		if Debug {
+			// check if putting same arr
+			ptr := uintptr(unsafe.Pointer(&arr))
+			for i := range c.putarr {
+				if c.putarr[i] == ptr {
+					panic(fmt.Errorf("dublicate of putting"))
+				}
+			}
+			c.putarr = append(c.putarr, ptr)
+		}
 		c.ps[index].p.Put(arr)
 	}
 	c.mutex.Unlock()

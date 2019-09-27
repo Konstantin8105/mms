@@ -3,14 +3,17 @@
 package mms
 
 import (
+	"fmt"
 	"sort"
 	"sync"
+	"unsafe"
 )
 
 // Int64sCache of slices
 type Int64sCache struct {
-	mutex sync.RWMutex
-	ps    []poolInt64sCache
+	mutex  sync.RWMutex
+	ps     []poolInt64sCache
+	putarr []uintptr
 }
 
 type poolInt64sCache struct {
@@ -52,10 +55,11 @@ func (c *Int64sCache) Get(size int) []int64 {
 	// pool is found
 	arr := c.ps[index].p.Get().([]int64)
 
-	// Only for debugging:
-	//	if len(arr) < size {
-	//		panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
-	//	}
+	if Debug {
+		if len(arr) < size {
+			panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
+		}
+	}
 
 	for i := range arr {
 		// initialization of slice
@@ -81,6 +85,16 @@ func (c *Int64sCache) Put(arr []int64) {
 	// lock and add
 	c.mutex.Lock()
 	if index < len(c.ps) && c.ps[index].size == size {
+		if Debug {
+			// check if putting same arr
+			ptr := uintptr(unsafe.Pointer(&arr))
+			for i := range c.putarr {
+				if c.putarr[i] == ptr {
+					panic(fmt.Errorf("dublicate of putting"))
+				}
+			}
+			c.putarr = append(c.putarr, ptr)
+		}
 		c.ps[index].p.Put(arr)
 	}
 	c.mutex.Unlock()
