@@ -45,7 +45,7 @@ func (c *Float32sCache) Get(size int) []float32 {
 		})
 
 		// return
-		index = len(c.ps) - 1
+		index = c.index(size)
 		return c.ps[index].p.New().([]float32)
 	}
 
@@ -59,7 +59,7 @@ func (c *Float32sCache) Get(size int) []float32 {
 
 	for i := range arr {
 		// initialization of slice
-		arr[i] = 0.0
+		arr[i] = 0
 	}
 	return arr
 }

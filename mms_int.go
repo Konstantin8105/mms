@@ -45,7 +45,7 @@ func (c *IntsCache) Get(size int) []int {
 		})
 
 		// return
-		index = len(c.ps) - 1
+		index = c.index(size)
 		return c.ps[index].p.New().([]int)
 	}
 
@@ -59,7 +59,7 @@ func (c *IntsCache) Get(size int) []int {
 
 	for i := range arr {
 		// initialization of slice
-		arr[i] = 0.0
+		arr[i] = 0
 	}
 	return arr
 }

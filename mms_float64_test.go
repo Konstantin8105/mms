@@ -153,24 +153,17 @@ func Benchmark(b *testing.B) {
 func TestEmpty(t *testing.T) {
 	var c Float64sCache
 	arr := c.Get(3)
+	if len(arr) != 3 {
+		t.Errorf("not valid len")
+	}
 	arr[0] = 42
 	c.Put(arr)
-	{
-		arr2 := c.Get(2)
-		if arr[0] == arr2[0] {
-			t.Errorf("not same arrays")
+	for _, size := range []int{2, 5, 5, 1} {
+		arr2 := c.Get(size)
+		if len(arr2) != size {
+			t.Errorf("not valid len: %d:%d with size = %d",
+				len(arr2), cap(arr2), size)
 		}
-		c.Put(arr2)
-	}
-	{
-		arr2 := c.Get(5)
-		if arr[0] == arr2[0] {
-			t.Errorf("not same arrays")
-		}
-		c.Put(arr2)
-	}
-	{
-		arr2 := c.Get(1)
 		if arr[0] == arr2[0] {
 			t.Errorf("not same arrays")
 		}
