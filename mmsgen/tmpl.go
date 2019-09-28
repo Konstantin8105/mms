@@ -69,6 +69,9 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 		if len(arr) < size {
 			panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
 		}
+		if len(arr) != cap(arr) {
+			panic(fmt.Errorf("not valid capacity: %d != %d", len(arr), cap(arr)))
+		}
 	}
 
 	for i := range arr {
@@ -94,7 +97,11 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 
 	// lock and add
 	c.mutex.Lock()
+	defer func() {
+		c.mutex.Unlock()
+	}()
 	if index < len(c.ps) && c.ps[index].size == size {
+		*arr = (*arr)[:0]
 		if Debug {
 			// check if putting same arr
 			ptr := uintptr(unsafe.Pointer(arr))
@@ -104,11 +111,10 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 				}
 			}
 			c.putarr = append(c.putarr, ptr)
+			return
 		}
-		*arr = (*arr)[:0]
 		c.ps[index].p.Put(*arr)
 	}
-	c.mutex.Unlock()
 }
 
 // return index with excepted size
@@ -126,4 +132,29 @@ func (c *{{ .CacheName }}) index(size int) int {
 	return index
 }
 
+
+// Reset internal structure.
+// In debug case - better for founding double putting.
+// In normal case - for memory management with different memory profile.
+// 
+//	Example of code:
+//	w := cache.Get(10)
+//	defer func() {
+//		if mms.Debug {
+//			cache.Reset()
+//		}
+//	}
+//	... // Put memory in cache in next lines of code
+//
+func (c *{{ .CacheName }}) Reset() {
+	// lock
+	c.mutex.Lock()
+	defer func() {
+		c.mutex.Unlock()
+	}()
+
+	// remove 
+	c.ps = make([]pool{{ .CacheName }},0)
+	c.putarr = make([]uintptr, 0)
+}
 `

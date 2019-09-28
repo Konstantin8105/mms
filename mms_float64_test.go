@@ -89,7 +89,8 @@ func Test(t *testing.T) {
 					for o := range arr {
 						arr[o] = rand.Float64()
 					}
-					atomic.AddInt64(&profile[i][amount], 1)
+					size := cap(arr)
+					atomic.AddInt64(&profile[i][size], 1)
 					time.Sleep(time.Millisecond)
 					memory[i].Put(&arr)
 				}
@@ -213,4 +214,26 @@ func TestMemoryAccessAfterPut(t *testing.T) {
 	arr := c.Get(size)
 	c.Put(&arr)
 	arr[3] = 42
+}
+
+func TestReset(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("Cannot reset cache")
+		}
+	}()
+	oldDebug := Debug
+	defer func() {
+		Debug = oldDebug
+	}()
+
+	Debug = true
+
+	size := 5
+
+	var c Float64sCache
+	arr := c.Get(size)
+	c.Put(&arr)
+	c.Reset() // reset
+	c.Put(&arr)
 }
