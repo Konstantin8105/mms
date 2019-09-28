@@ -55,6 +55,10 @@ func (c *Int64sCache) Get(size int) []int64 {
 	// pool is found
 	arr := c.ps[index].p.Get().([]int64)
 
+	if len(arr) == 0 {
+		arr = arr[:size]
+	}
+
 	if Debug {
 		if len(arr) < size {
 			panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
@@ -69,10 +73,10 @@ func (c *Int64sCache) Get(size int) []int64 {
 }
 
 // Put slice into pool
-func (c *Int64sCache) Put(arr []int64) {
+func (c *Int64sCache) Put(arr *[]int64) {
 	c.mutex.RLock() // lock
 	var (
-		size  = cap(arr)
+		size  = cap(*arr)
 		index = c.index(size) // finding index
 	)
 	c.mutex.RUnlock() // unlock
@@ -87,7 +91,7 @@ func (c *Int64sCache) Put(arr []int64) {
 	if index < len(c.ps) && c.ps[index].size == size {
 		if Debug {
 			// check if putting same arr
-			ptr := uintptr(unsafe.Pointer(&arr))
+			ptr := uintptr(unsafe.Pointer(arr))
 			for i := range c.putarr {
 				if c.putarr[i] == ptr {
 					panic(fmt.Errorf("dublicate of putting"))
@@ -95,7 +99,8 @@ func (c *Int64sCache) Put(arr []int64) {
 			}
 			c.putarr = append(c.putarr, ptr)
 		}
-		c.ps[index].p.Put(arr)
+		*arr = (*arr)[:0]
+		c.ps[index].p.Put(*arr)
 	}
 	c.mutex.Unlock()
 }

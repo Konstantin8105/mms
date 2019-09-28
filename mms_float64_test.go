@@ -11,7 +11,7 @@ import (
 // mm - interface memory management
 type mm interface {
 	Get(size int) []float64
-	Put(arr []float64)
+	Put(arr *[]float64)
 }
 
 // direct allocation of memory
@@ -21,7 +21,7 @@ func (c *Direct) Get(size int) []float64 {
 	return make([]float64, size)
 }
 
-func (c *Direct) Put(arr []float64) {
+func (c *Direct) Put(arr *[]float64) {
 	_ = arr
 }
 
@@ -91,7 +91,7 @@ func Test(t *testing.T) {
 					}
 					atomic.AddInt64(&profile[i][amount], 1)
 					time.Sleep(time.Millisecond)
-					memory[i].Put(arr)
+					memory[i].Put(&arr)
 				}
 				wg.Done()
 			}()
@@ -141,7 +141,7 @@ func Benchmark(b *testing.B) {
 							for o := range arr {
 								arr[o] = rand.Float64()
 							}
-							memory[im].m.Put(arr)
+							memory[im].m.Put(&arr)
 						}
 						wg.Done()
 					}()
@@ -159,7 +159,7 @@ func TestEmpty(t *testing.T) {
 		t.Errorf("not valid len")
 	}
 	arr[0] = 42
-	c.Put(arr)
+	c.Put(&arr)
 	for _, size := range []int{2, 5, 5, 3, 100, 2, 5, 3, 100} {
 		arr2 := c.Get(size)
 		if len(arr2) != size {
@@ -169,11 +169,11 @@ func TestEmpty(t *testing.T) {
 		if arr2[0] != 0 {
 			t.Errorf("not same arrays")
 		}
-		c.Put(arr2)
+		c.Put(&arr2)
 	}
 }
 
-func TestDebug(t *testing.T) {
+func TestDouble(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Fatalf("Cannot found double putting")
@@ -190,6 +190,27 @@ func TestDebug(t *testing.T) {
 
 	var c Float64sCache
 	arr := c.Get(size)
-	c.Put(arr)
-	c.Put(arr)
+	c.Put(&arr)
+	c.Put(&arr)
+}
+
+func TestMemoryAccessAfterPut(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatalf("Cannot found memory access after putting")
+		}
+	}()
+	oldDebug := Debug
+	defer func() {
+		Debug = oldDebug
+	}()
+
+	Debug = true
+
+	size := 5
+
+	var c Float64sCache
+	arr := c.Get(size)
+	c.Put(&arr)
+	arr[3] = 42
 }
