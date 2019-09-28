@@ -23,6 +23,12 @@ type poolInt32sCache struct {
 
 // Get return slice
 func (c *Int32sCache) Get(size int) []int32 {
+
+	if size == 0 {
+		// empty size
+		return
+	}
+
 	// lock
 	c.mutex.Lock()
 	defer func() {
@@ -86,6 +92,10 @@ func (c *Int32sCache) Put(arr *[]int32) {
 
 	if index < 0 {
 		// pool is not exist
+		return
+	}
+	if size == 0 {
+		// empty size
 		return
 	}
 

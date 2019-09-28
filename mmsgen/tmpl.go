@@ -29,6 +29,12 @@ type pool{{ .CacheName }} struct {
 
 // Get return slice
 func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
+
+	if size == 0 {
+		// empty size
+		return
+	}
+
 	// lock
 	c.mutex.Lock()
 	defer func() {
@@ -92,6 +98,10 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 
 	if index < 0 {
 		// pool is not exist
+		return
+	}
+	if size == 0 {
+		// empty size
 		return
 	}
 

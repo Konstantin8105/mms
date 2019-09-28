@@ -23,6 +23,12 @@ type poolFloat64sCache struct {
 
 // Get return slice
 func (c *Float64sCache) Get(size int) []float64 {
+
+	if size == 0 {
+		// empty size
+		return
+	}
+
 	// lock
 	c.mutex.Lock()
 	defer func() {
@@ -86,6 +92,10 @@ func (c *Float64sCache) Put(arr *[]float64) {
 
 	if index < 0 {
 		// pool is not exist
+		return
+	}
+	if size == 0 {
+		// empty size
 		return
 	}
 
