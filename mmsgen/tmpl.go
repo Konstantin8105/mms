@@ -19,12 +19,17 @@ import (
 type {{ .CacheName }} struct {
 	mutex  sync.RWMutex
 	ps     []pool{{ .CacheName }}
-	putarr []uintptr
+	putarr []debug{{ .CacheName }}
 }
 
 type pool{{ .CacheName }} struct {
 	p    *sync.Pool
 	size int
+}
+
+type debug{{ .CacheName }} struct{
+	ptr  uintptr
+	line string
 }
 
 // Get return slice
@@ -115,11 +120,17 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 			// check if putting same arr
 			ptr := uintptr(unsafe.Pointer(arr))
 			for i := range c.putarr {
-				if c.putarr[i] == ptr {
-					panic(fmt.Errorf("dublicate of putting"))
+				if c.putarr[i].ptr == ptr {
+					panic(fmt.Errorf(
+						"Dublicate of Put. Last is called in :\n%v",
+						c.putarr[i].line,
+					))
 				}
 			}
-			c.putarr = append(c.putarr, ptr)
+			c.putarr = append(c.putarr, debug{{ .CacheName }} {
+				ptr : ptr,
+				line: called(),
+			})
 			return
 		}
 		c.ps[index].p.Put(*arr)
@@ -164,6 +175,6 @@ func (c *{{ .CacheName }}) Reset() {
 
 	// remove 
 	c.ps = make([]pool{{ .CacheName }},0)
-	c.putarr = make([]uintptr, 0)
+	c.putarr = make([]debug{{ .CacheName }}, 0)
 }
 `

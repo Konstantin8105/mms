@@ -13,12 +13,17 @@ import (
 type Float32sCache struct {
 	mutex  sync.RWMutex
 	ps     []poolFloat32sCache
-	putarr []uintptr
+	putarr []debugFloat32sCache
 }
 
 type poolFloat32sCache struct {
 	p    *sync.Pool
 	size int
+}
+
+type debugFloat32sCache struct {
+	ptr  uintptr
+	line string
 }
 
 // Get return slice
@@ -109,11 +114,17 @@ func (c *Float32sCache) Put(arr *[]float32) {
 			// check if putting same arr
 			ptr := uintptr(unsafe.Pointer(arr))
 			for i := range c.putarr {
-				if c.putarr[i] == ptr {
-					panic(fmt.Errorf("dublicate of putting"))
+				if c.putarr[i].ptr == ptr {
+					panic(fmt.Errorf(
+						"Dublicate of Put. Last is called in :\n%v",
+						c.putarr[i].line,
+					))
 				}
 			}
-			c.putarr = append(c.putarr, ptr)
+			c.putarr = append(c.putarr, debugFloat32sCache{
+				ptr:  ptr,
+				line: called(),
+			})
 			return
 		}
 		c.ps[index].p.Put(*arr)
@@ -157,5 +168,5 @@ func (c *Float32sCache) Reset() {
 
 	// remove
 	c.ps = make([]poolFloat32sCache, 0)
-	c.putarr = make([]uintptr, 0)
+	c.putarr = make([]debugFloat32sCache, 0)
 }

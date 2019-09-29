@@ -1,7 +1,9 @@
 package mms
 
 import (
+	"fmt"
 	"math/rand"
+	"os"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -178,6 +180,8 @@ func TestDublicatePutting(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Fatalf("Cannot found dublicate putting")
+		} else {
+			fmt.Fprintf(os.Stdout, "\n%v\n", r)
 		}
 	}()
 	oldDebug := Debug
@@ -192,8 +196,10 @@ func TestDublicatePutting(t *testing.T) {
 	var c Float64sCache
 	arr := c.Get(size)
 	c.Put(&arr)
-	arr = arr[:size]
-	c.Put(&arr)
+	for i := 0; i < 10; i++ {
+		arr = arr[:size]
+		c.Put(&arr)
+	}
 }
 
 func TestMemoryAccessAfterPut(t *testing.T) {
