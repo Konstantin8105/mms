@@ -116,8 +116,11 @@ func (c *Float64sCache) Put(arr *[]float64) {
 			for i := range c.putarr {
 				if c.putarr[i].ptr == ptr {
 					panic(fmt.Errorf(
-						"Dublicate of Put. Last is called in :\n%v",
+						"Dublicate of Put.\n"+
+							"Last is called in :\n%v\n"+
+							"Present call in   :\n%v\n",
 						c.putarr[i].line,
+						called(),
 					))
 				}
 			}
