@@ -3,6 +3,7 @@
 package mms
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"sort"
 	"sync"
@@ -25,6 +26,7 @@ type debugInt64sCache struct {
 	ptr  uintptr
 	size int
 	line string
+	hash [sha256.Size]byte
 }
 
 // Get return slice
@@ -110,12 +112,14 @@ func (c *Int64sCache) Put(arr *[]int64) {
 		c.mutex.Unlock()
 	}()
 	if index < len(c.ps) && c.ps[index].size == size {
-		*arr = (*arr)[:0]
 		if Debug {
 			// check if putting same arr
 			ptr := uintptr(unsafe.Pointer(arr))
+			hsh := sha256.Sum256([]byte(fmt.Sprintf("%v", *arr)))
 			for i := range c.putarr {
-				if c.putarr[i].size == size && c.putarr[i].ptr == ptr {
+				if c.putarr[i].size == size &&
+					c.putarr[i].ptr == ptr &&
+					c.putarr[i].hash == hsh {
 					length := 12
 					if cap(*arr) < length {
 						length = cap(*arr)
@@ -125,11 +129,13 @@ func (c *Int64sCache) Put(arr *[]int64) {
 							"Last is called in :\n%v\n"+
 							"Present call in   :\n%v\n"+
 							"Array   : %v\n"+
-							"Pointer : %v\n",
+							"Pointer : %v\n"+
+							"Hash256 : %v\n",
 						c.putarr[i].line,
 						called(),
 						(*arr)[:length],
 						ptr,
+						hsh,
 					))
 				}
 			}
@@ -137,9 +143,12 @@ func (c *Int64sCache) Put(arr *[]int64) {
 				ptr:  ptr,
 				size: size,
 				line: called(),
+				hash: hsh,
 			})
+			*arr = (*arr)[:0]
 			return
 		}
+		*arr = (*arr)[:0]
 		c.ps[index].p.Put(*arr)
 	}
 }
