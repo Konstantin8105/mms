@@ -23,6 +23,7 @@ type poolIntsCache struct {
 
 type debugIntsCache struct {
 	ptr  uintptr
+	size int
 	line string
 }
 
@@ -114,7 +115,7 @@ func (c *IntsCache) Put(arr *[]int) {
 			// check if putting same arr
 			ptr := uintptr(unsafe.Pointer(arr))
 			for i := range c.putarr {
-				if c.putarr[i].ptr == ptr {
+				if c.putarr[i].size == size && c.putarr[i].ptr == ptr {
 					length := 12
 					if cap(*arr) < length {
 						length = cap(*arr)
@@ -134,6 +135,7 @@ func (c *IntsCache) Put(arr *[]int) {
 			}
 			c.putarr = append(c.putarr, debugIntsCache{
 				ptr:  ptr,
+				size: size,
 				line: called(),
 			})
 			return

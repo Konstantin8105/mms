@@ -29,6 +29,7 @@ type pool{{ .CacheName }} struct {
 
 type debug{{ .CacheName }} struct{
 	ptr  uintptr
+	size int
 	line string
 }
 
@@ -120,7 +121,7 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 			// check if putting same arr
 			ptr := uintptr(unsafe.Pointer(arr))
 			for i := range c.putarr {
-				if c.putarr[i].ptr == ptr {
+				if c.putarr[i].size == size && c.putarr[i].ptr == ptr {
 					length := 12
 					if cap(*arr) < length {
 						length = cap(*arr)
@@ -140,6 +141,7 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 			}
 			c.putarr = append(c.putarr, debug{{ .CacheName }} {
 				ptr : ptr,
+				size: size,
 				line: called(),
 			})
 			return

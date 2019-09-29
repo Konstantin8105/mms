@@ -23,6 +23,7 @@ type poolFloat64sCache struct {
 
 type debugFloat64sCache struct {
 	ptr  uintptr
+	size int
 	line string
 }
 
@@ -114,7 +115,7 @@ func (c *Float64sCache) Put(arr *[]float64) {
 			// check if putting same arr
 			ptr := uintptr(unsafe.Pointer(arr))
 			for i := range c.putarr {
-				if c.putarr[i].ptr == ptr {
+				if c.putarr[i].size == size && c.putarr[i].ptr == ptr {
 					length := 12
 					if cap(*arr) < length {
 						length = cap(*arr)
@@ -134,6 +135,7 @@ func (c *Float64sCache) Put(arr *[]float64) {
 			}
 			c.putarr = append(c.putarr, debugFloat64sCache{
 				ptr:  ptr,
+				size: size,
 				line: called(),
 			})
 			return
