@@ -23,7 +23,7 @@ type poolInt32sCache struct {
 }
 
 type debugInt32sCache struct {
-	ptr  uintptr
+	ptr  unsafe.Pointer
 	size int
 	line string
 	hash [sha256.Size]byte
@@ -114,7 +114,7 @@ func (c *Int32sCache) Put(arr *[]int32) {
 	if index < len(c.ps) && c.ps[index].size == size {
 		if Debug {
 			// check if putting same arr
-			ptr := uintptr(unsafe.Pointer(arr))
+			ptr := (unsafe.Pointer(arr))
 			hsh := sha256.Sum256([]byte(fmt.Sprintf("%v", *arr)))
 			for i := range c.putarr {
 				if c.putarr[i].size == size &&
@@ -146,7 +146,7 @@ func (c *Int32sCache) Put(arr *[]int32) {
 				hash: hsh,
 			})
 			*arr = (*arr)[:0]
-			ptr = uintptr(unsafe.Pointer(arr))
+			ptr = (unsafe.Pointer(arr))
 			c.putarr = append(c.putarr, debugInt32sCache{
 				ptr:  ptr,
 				size: size,
