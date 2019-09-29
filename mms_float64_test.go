@@ -174,10 +174,10 @@ func TestEmpty(t *testing.T) {
 	}
 }
 
-func TestDouble(t *testing.T) {
+func TestDublicatePutting(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
-			t.Fatalf("Cannot found double putting")
+			t.Fatalf("Cannot found dublicate putting")
 		}
 	}()
 	oldDebug := Debug
@@ -192,6 +192,7 @@ func TestDouble(t *testing.T) {
 	var c Float64sCache
 	arr := c.Get(size)
 	c.Put(&arr)
+	arr = arr[:size]
 	c.Put(&arr)
 }
 

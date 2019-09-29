@@ -93,6 +93,10 @@ func (c *Float64sCache) Put(arr *[]float64) {
 		// empty size
 		return
 	}
+	if len(*arr) == 0 {
+		// propably it is a dublicate putting
+		return
+	}
 
 	// lock and add
 	c.mutex.Lock()

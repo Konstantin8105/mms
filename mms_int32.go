@@ -93,6 +93,10 @@ func (c *Int32sCache) Put(arr *[]int32) {
 		// empty size
 		return
 	}
+	if len(*arr) == 0 {
+		// propably it is a dublicate putting
+		return
+	}
 
 	// lock and add
 	c.mutex.Lock()

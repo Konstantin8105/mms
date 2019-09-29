@@ -99,6 +99,10 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 		// empty size
 		return
 	}
+	if len(*arr) == 0 {
+		// propably it is a dublicate putting
+		return
+	}
 
 	// lock and add
 	c.mutex.Lock()
