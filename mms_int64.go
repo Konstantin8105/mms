@@ -146,6 +146,13 @@ func (c *Int64sCache) Put(arr *[]int64) {
 				hash: hsh,
 			})
 			*arr = (*arr)[:0]
+			ptr = uintptr(unsafe.Pointer(arr))
+			c.putarr = append(c.putarr, debugInt64sCache{
+				ptr:  ptr,
+				size: size,
+				line: called(),
+				hash: hsh,
+			})
 			return
 		}
 		*arr = (*arr)[:0]

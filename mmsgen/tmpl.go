@@ -152,6 +152,13 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 				hash: hsh,
 			})
 			*arr = (*arr)[:0]
+			ptr = uintptr(unsafe.Pointer(arr))
+			c.putarr = append(c.putarr, debug{{ .CacheName }} {
+				ptr : ptr,
+				size: size,
+				line: called(),
+				hash: hsh,
+			})
 			return
 		}
 		*arr = (*arr)[:0]
