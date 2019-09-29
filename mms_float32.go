@@ -24,11 +24,6 @@ type poolFloat32sCache struct {
 // Get return slice
 func (c *Float32sCache) Get(size int) []float32 {
 
-	if size == 0 {
-		// empty size
-		return
-	}
-
 	// lock
 	c.mutex.Lock()
 	defer func() {

@@ -24,11 +24,6 @@ type poolIntsCache struct {
 // Get return slice
 func (c *IntsCache) Get(size int) []int {
 
-	if size == 0 {
-		// empty size
-		return
-	}
-
 	// lock
 	c.mutex.Lock()
 	defer func() {
