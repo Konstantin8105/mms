@@ -115,12 +115,20 @@ func (c *IntsCache) Put(arr *[]int) {
 			ptr := uintptr(unsafe.Pointer(arr))
 			for i := range c.putarr {
 				if c.putarr[i].ptr == ptr {
+					length := 12
+					if cap(*arr) < length {
+						length = cap(*arr)
+					}
 					panic(fmt.Errorf(
 						"Dublicate of Put.\n"+
 							"Last is called in :\n%v\n"+
-							"Present call in   :\n%v\n",
+							"Present call in   :\n%v\n"+
+							"Array   : %v\n"+
+							"Pointer : %v\n",
 						c.putarr[i].line,
 						called(),
+						(*arr)[:length],
+						ptr,
 					))
 				}
 			}
