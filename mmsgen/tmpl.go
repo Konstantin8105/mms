@@ -9,8 +9,6 @@ import (
 	"sort"
 	"sync"
 	"fmt"
-	"crypto/sha256"
-	"unsafe"
 	{{ range .Imports }}
 	"{{ . }}"
 	{{ end }}
@@ -29,10 +27,8 @@ type pool{{ .CacheName }} struct {
 }
 
 type debug{{ .CacheName }} struct{
-	ptr  unsafe.Pointer
-	size int
+	arr  *{{ .Type }}
 	line string
-	hash [sha256.Size]byte
 }
 
 // Get return slice
@@ -117,53 +113,31 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 	defer func() {
 		c.mutex.Unlock()
 	}()
-	if index < len(c.ps) && c.ps[index].size == size {
-		if Debug {
-			// check if putting same arr
-			ptr := (unsafe.Pointer(arr))
-			hsh := sha256.Sum256([]byte(fmt.Sprintf("%v",*arr)))
-			for i := range c.putarr {
-				if c.putarr[i].size == size && 
-				   c.putarr[i].ptr  == ptr  &&
-				   c.putarr[i].hash == hsh  {
-					length := 12
-					if cap(*arr) < length {
-						length = cap(*arr)
-					}
-					panic(fmt.Errorf(
-						"Dublicate of Put.\n"+
-						"Last is called in :\n%v\n" +
-						"Present call in   :\n%v\n" +
-						"Array   : %v\n" +
-						"Pointer : %v\n" +
-						"Hash256 : %v\n",
-						c.putarr[i].line,
-						called(),
-						(*arr)[:length],
-						ptr,
-						hsh,
-					))
-				}
-			}
-			c.putarr = append(c.putarr, debug{{ .CacheName }} {
-				ptr : ptr,
-				size: size,
-				line: called(),
-				hash: hsh,
-			})
-			*arr = (*arr)[:0]
-			ptr = (unsafe.Pointer(arr))
-			c.putarr = append(c.putarr, debug{{ .CacheName }} {
-				ptr : ptr,
-				size: size,
-				line: called(),
-				hash: hsh,
-			})
-			return
-		}
-		*arr = (*arr)[:0]
-		c.ps[index].p.Put(*arr)
+	if !(index < len(c.ps) && c.ps[index].size == size) {
+		return
 	}
+	*arr = (*arr)[:0]
+	if Debug {
+		// check if putting same arr
+		for i := range c.putarr {
+			if c.putarr[i].arr != arr {
+				continue
+			}
+			panic(fmt.Errorf(
+				"Dublicate of Put.\n"+
+				"Last is called in :\n%v\n" +
+				"Present call in   :\n%v\n",
+				c.putarr[i].line,
+				called(),
+			))
+		}
+		c.putarr = append(c.putarr, debug{{ .CacheName }} {
+			arr : arr,
+			line: called(),
+		})
+		return
+	}
+	c.ps[index].p.Put(*arr)
 }
 
 // return index with excepted size

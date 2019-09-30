@@ -181,7 +181,9 @@ func TestDublicatePutting(t *testing.T) {
 		if r := recover(); r == nil {
 			t.Fatalf("Cannot found dublicate putting")
 		} else {
-			fmt.Fprintf(os.Stdout, "\n%v\n", r)
+			if testing.Verbose() {
+				fmt.Fprintf(os.Stdout, "\n%v\n", r)
+			}
 		}
 	}()
 	oldDebug := Debug
@@ -243,4 +245,26 @@ func TestReset(t *testing.T) {
 	c.Put(&arr)
 	c.Reset() // reset
 	c.Put(&arr)
+}
+
+func TestConcept(t *testing.T) {
+	a := make([]int, 2)
+	b := &a
+	c := *b
+
+	if &a != b {
+		t.Errorf("not valid &a != b")
+	}
+
+	a = make([]int, 3)
+
+	if len(a) != 3 {
+		t.Errorf("not valid a")
+	}
+	if len(*b) != 3 {
+		t.Errorf("not valid *b")
+	}
+	if len(c) != 2 {
+		t.Errorf("not valid c")
+	}
 }
