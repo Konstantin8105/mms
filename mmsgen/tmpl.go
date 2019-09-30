@@ -94,12 +94,17 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 
 // Put slice into pool
 func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
-	c.mutex.RLock() // lock
+
+	// lock
+	c.mutex.Lock()
+	defer func() {
+		c.mutex.Unlock()
+	}()
+
 	var (
 		size  = cap(*arr)
 		index = c.index(size) // finding index
 	)
-	c.mutex.RUnlock() // unlock
 
 	if index < 0 {
 		// pool is not exist
@@ -114,11 +119,6 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 		return
 	}
 
-	// lock and add
-	c.mutex.Lock()
-	defer func() {
-		c.mutex.Unlock()
-	}()
 	if !(index < len(c.ps) && c.ps[index].size == size) {
 		return
 	}

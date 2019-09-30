@@ -88,12 +88,17 @@ func (c *Float32sCache) Get(size int) []float32 {
 
 // Put slice into pool
 func (c *Float32sCache) Put(arr *[]float32) {
-	c.mutex.RLock() // lock
+
+	// lock
+	c.mutex.Lock()
+	defer func() {
+		c.mutex.Unlock()
+	}()
+
 	var (
 		size  = cap(*arr)
 		index = c.index(size) // finding index
 	)
-	c.mutex.RUnlock() // unlock
 
 	if index < 0 {
 		// pool is not exist
@@ -108,11 +113,6 @@ func (c *Float32sCache) Put(arr *[]float32) {
 		return
 	}
 
-	// lock and add
-	c.mutex.Lock()
-	defer func() {
-		c.mutex.Unlock()
-	}()
 	if !(index < len(c.ps) && c.ps[index].size == size) {
 		return
 	}

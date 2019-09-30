@@ -88,12 +88,17 @@ func (c *IntsCache) Get(size int) []int {
 
 // Put slice into pool
 func (c *IntsCache) Put(arr *[]int) {
-	c.mutex.RLock() // lock
+
+	// lock
+	c.mutex.Lock()
+	defer func() {
+		c.mutex.Unlock()
+	}()
+
 	var (
 		size  = cap(*arr)
 		index = c.index(size) // finding index
 	)
-	c.mutex.RUnlock() // unlock
 
 	if index < 0 {
 		// pool is not exist
@@ -108,11 +113,6 @@ func (c *IntsCache) Put(arr *[]int) {
 		return
 	}
 
-	// lock and add
-	c.mutex.Lock()
-	defer func() {
-		c.mutex.Unlock()
-	}()
 	if !(index < len(c.ps) && c.ps[index].size == size) {
 		return
 	}
