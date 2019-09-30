@@ -198,10 +198,8 @@ func TestDublicatePutting(t *testing.T) {
 	var c Float64sCache
 	arr := c.Get(size)
 	c.Put(&arr)
-	for i := 0; i < 10; i++ {
-		arr = arr[:size]
-		c.Put(&arr)
-	}
+	arr = arr[:size]
+	c.Put(&arr)
 }
 
 func TestMemoryAccessAfterPut(t *testing.T) {
