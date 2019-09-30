@@ -66,6 +66,12 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 	// pool is found
 	arr := c.ps[index].p.Get().({{ .Type }})
 
+	if Debug {
+		if len(arr) != 0 && cap(arr) != size {
+			panic(fmt.Errorf("not valid sizes: %d != %d", len(arr), size))
+		}
+	}
+
 	if len(arr) == 0{
 		arr = arr[:size]
 	}

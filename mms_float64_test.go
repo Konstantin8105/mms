@@ -90,6 +90,9 @@ func Test(t *testing.T) {
 					go func() {
 						for amount := range ch {
 							arr := memory[i].Get(amount)
+							if len(arr) != amount || cap(arr) != amount {
+								t.Errorf("not valid size")
+							}
 							// check input data
 							for o := range arr {
 								if arr[o] != 0.0 {
@@ -98,7 +101,12 @@ func Test(t *testing.T) {
 							}
 							// change input data
 							for o := range arr {
-								arr[o] = rand.Float64()
+								arr[o] = float64(o) + 2.33
+							}
+							for o := range arr {
+								if arr[o] == 0.0 {
+									t.Errorf("Zero for %d flow: %e", i, arr[o])
+								}
 							}
 							size := cap(arr)
 							if len(arr) != amount || cap(arr) != amount {
