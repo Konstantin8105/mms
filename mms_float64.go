@@ -57,6 +57,10 @@ func (c *Float64sCache) Get(size int) []float64 {
 		return c.ps[index].p.New().([]float64)
 	}
 
+	if Debug {
+		panic("in Debug mode - it is impossible")
+	}
+
 	// pool is found
 	arr := c.ps[index].p.Get().([]float64)
 

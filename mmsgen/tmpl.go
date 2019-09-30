@@ -63,6 +63,10 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 		return c.ps[index].p.New().({{ .Type }})
 	}
 
+	if Debug {
+		panic("in Debug mode - it is impossible")
+	}
+
 	// pool is found
 	arr := c.ps[index].p.Get().({{ .Type }})
 
