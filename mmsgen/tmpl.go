@@ -125,7 +125,7 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 		return
 	}
 
-	*arr = (*arr)[:0]
+	// *arr = (*arr)[:0]// Todo
 
 	if Debug {
 		// check if putting same arr
