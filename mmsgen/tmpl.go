@@ -66,24 +66,24 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 	// pool is found
 	arr := c.ps[index].p.Get().({{ .Type }})
 
-	if Debug {
+	// if Debug {
 		if len(arr) != 0 && cap(arr) != size {
 			panic(fmt.Errorf("not valid sizes: %d != %d", len(arr), size))
 		}
-	}
+	// }
 
 	if len(arr) == 0{
 		arr = arr[:size]
 	}
 
-	if Debug {
+	// if Debug {
 		if len(arr) < size {
 			panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
 		}
 		if len(arr) != cap(arr) {
 			panic(fmt.Errorf("not valid capacity: %d != %d", len(arr), cap(arr)))
 		}
-	}
+	// }
 
 	for i, size := 0, cap(arr) ; i < size ; i++ {
 		// initialization of slice
@@ -125,7 +125,7 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 		return
 	}
 
-	// *arr = (*arr)[:0]// Todo
+	*arr = (*arr)[:0]
 
 	if Debug {
 		// check if putting same arr
@@ -146,8 +146,8 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 			line: called(),
 		})
 		// return
-		b :=( {{ .CodeNew }} )
-		arr = &b
+		temp := ({{ .CodeNew }})
+		arr = &temp
 	}
 	c.ps[index].p.Put(*arr)
 }
