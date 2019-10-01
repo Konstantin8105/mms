@@ -145,7 +145,9 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 			arr : arr,
 			line: called(),
 		})
-		return
+		// return
+		b :=( {{ .CodeNew }} )
+		arr = &b
 	}
 	c.ps[index].p.Put(*arr)
 }
