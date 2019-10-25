@@ -76,14 +76,17 @@ func (c *{{ .CacheName }}) Get(size int) {{ .Type }} {
 		arr = arr[:size]
 	}
 
-	if Debug {
+// 	if Debug {
 		if len(arr) < size {
 			panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
 		}
 		if len(arr) != cap(arr) {
 			panic(fmt.Errorf("not valid capacity: %d != %d", len(arr), cap(arr)))
 		}
-	}
+		if len(arr) != size {
+			panic(fmt.Errorf("not valid len: %d != %d", len(arr), size))
+		}
+// 	}
 
 	for i, size := 0, len(arr) ; i < size ; i++ {
 		// initialization of slice
@@ -149,8 +152,8 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 			arr : arr,
 			line: called(),
 		})
-		temp := ({{ .CodeNew }})
-		arr = &temp
+		// temp := ({{ .CodeNew }})
+		// arr = &temp
 	}
 	c.ps[index].p.Put(*arr)
 }

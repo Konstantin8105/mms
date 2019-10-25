@@ -70,14 +70,17 @@ func (c *Float64sCache) Get(size int) []float64 {
 		arr = arr[:size]
 	}
 
-	if Debug {
-		if len(arr) < size {
-			panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
-		}
-		if len(arr) != cap(arr) {
-			panic(fmt.Errorf("not valid capacity: %d != %d", len(arr), cap(arr)))
-		}
+	// 	if Debug {
+	if len(arr) < size {
+		panic(fmt.Errorf("not same sizes: %d != %d", len(arr), size))
 	}
+	if len(arr) != cap(arr) {
+		panic(fmt.Errorf("not valid capacity: %d != %d", len(arr), cap(arr)))
+	}
+	if len(arr) != size {
+		panic(fmt.Errorf("not valid len: %d != %d", len(arr), size))
+	}
+	// 	}
 
 	for i, size := 0, len(arr); i < size; i++ {
 		// initialization of slice
@@ -143,8 +146,8 @@ func (c *Float64sCache) Put(arr *[]float64) {
 			arr:  arr,
 			line: called(),
 		})
-		temp := (make([]float64, size))
-		arr = &temp
+		// temp := (make([]float64,size))
+		// arr = &temp
 	}
 	c.ps[index].p.Put(*arr)
 }
