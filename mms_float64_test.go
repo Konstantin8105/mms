@@ -247,7 +247,7 @@ func TestMemoryAccessAfterPut(t *testing.T) {
 		Debug = oldDebug
 	}()
 
-	for _, b := range []bool{true} {
+	for _, b := range []bool{false, true} {
 		t.Run(fmt.Sprintf("%v", b), func(t *testing.T) {
 			Debug = b
 
@@ -266,6 +266,9 @@ func TestMemoryAccessAfterPut(t *testing.T) {
 			arr := c.Get(size)
 			c.Put(&arr)
 			arr[3] = 42
+			if arr[3] == 42 {
+				panic("valid")
+			}
 		})
 	}
 }
