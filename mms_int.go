@@ -148,6 +148,9 @@ func (c *IntsCache) Put(arr *[]int) {
 		})
 		// temp := (make([]int,size))
 		// arr = &temp
+		if c.ps[index].size != size {
+			panic(fmt.Errorf("not valid index of size: %d != %d", c.ps[index].size, size))
+		}
 	}
 	c.ps[index].p.Put(*arr)
 }

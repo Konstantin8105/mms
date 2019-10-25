@@ -154,6 +154,9 @@ func (c *{{ .CacheName }}) Put(arr *{{ .Type }}) {
 		})
 		// temp := ({{ .CodeNew }})
 		// arr = &temp
+		if c.ps[index].size != size {
+			panic(fmt.Errorf("not valid index of size: %d != %d", c.ps[index].size, size))
+		}
 	}
 	c.ps[index].p.Put(*arr)
 }

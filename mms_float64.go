@@ -148,6 +148,9 @@ func (c *Float64sCache) Put(arr *[]float64) {
 		})
 		// temp := (make([]float64,size))
 		// arr = &temp
+		if c.ps[index].size != size {
+			panic(fmt.Errorf("not valid index of size: %d != %d", c.ps[index].size, size))
+		}
 	}
 	c.ps[index].p.Put(*arr)
 }
