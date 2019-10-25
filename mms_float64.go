@@ -60,15 +60,13 @@ func (c *Float64sCache) Get(size int) []float64 {
 	// pool is found
 	arr := c.ps[index].p.Get().([]float64)
 
+	arr = arr[:size]
+
 	// if Debug {
 	if len(arr) != 0 && cap(arr) != size {
 		panic(fmt.Errorf("not valid sizes: %d != %d", len(arr), size))
 	}
 	// }
-
-	if len(arr) == 0 {
-		arr = arr[:size]
-	}
 
 	// 	if Debug {
 	if len(arr) < size {
