@@ -228,16 +228,9 @@ func TestDublicatePutting(t *testing.T) {
 	var c Float64sCache
 	arr := c.Get(size)
 	if len(arr) != size {
-		t.Fatalf("not valid len")
+		t.Fatalf("not valid len #1")
 	}
 	c.Put(&arr)
-	if len(arr) != 0 {
-		t.Fatalf("not valid len")
-	}
-	arr = arr[:size]
-	if len(arr) != size {
-		t.Fatalf("not valid len")
-	}
 	c.Put(&arr)
 }
 
